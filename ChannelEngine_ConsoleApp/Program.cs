@@ -34,29 +34,65 @@ namespace ChannelEngine_ConsoleApp
                     Console.WriteLine($"{(i + 1).ToString()}. {getTopFiveProductsSold[i].ProductName} GTIN: {getTopFiveProductsSold[i].Gtin} Total Quantity: {getTopFiveProductsSold[i].TotalQuantity}");
                 }
 
+                Console.WriteLine("----");
 
+                Console.WriteLine("Select product to set stock level to 25 (Indicate the # of the product):");
+                Console.WriteLine("To exit the app, type in EXIT");
+                var userInput = Console.ReadLine();
 
-
-                var getProductToUpdateStock = getTopFiveProductsSold.First();
-
-                List<PatchProductDto> patches = new List<PatchProductDto>
+                while(true)
                 {
-                    new PatchProductDto
+                    var maximumOptions = getTopFiveProductsSold.Count;
+
+                    if (userInput == "EXIT")
                     {
-                        value = newStockLevel,
-                        path = "Stock",
-                        op = "replace"
+                        Environment.Exit(0);
                     }
-                };
+                    else
+                    {
+                        int i;
 
-                var updateStockLevel = await _channelEngineHelper.PatchProduct(getProductToUpdateStock.MerchantProductNo, patches);
+                        if (int.TryParse(userInput, out i))
+                        {
+                            var getProductToSetStock = getTopFiveProductsSold[i - 1];
 
-                if (updateStockLevel.Success)
-                {
-                    Console.WriteLine("-----");
-                    Console.WriteLine($"Updated {getProductToUpdateStock.ProductName}'s Stock to {newStockLevel}");
-                    Console.WriteLine("-----");
+                            List<PatchProductDto> patches = new List<PatchProductDto>
+                            {
+                                new PatchProductDto
+                                {
+                                    value = newStockLevel,
+                                    path = "Stock",
+                                    op = "replace"
+                                }
+                            };
+
+                            var updateStockLevel = await _channelEngineHelper.PatchProduct(getProductToSetStock.MerchantProductNo, patches);
+
+                            if (updateStockLevel.Success)
+                            {
+                                Console.WriteLine("-----");
+                                Console.WriteLine($"Updated {getProductToSetStock.ProductName}'s Stock to {newStockLevel}");
+                                Console.WriteLine("-----");
+                            }
+
+                            Console.WriteLine("Select product to set stock level to 25 (Indicate the # of the product):");
+                            Console.WriteLine("To exit the app, type in EXIT");
+                            userInput = Console.ReadLine();
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid input");
+                            userInput = Console.ReadLine();
+                        }
+                    }
                 }
+
+
+             
+
+             
+
+               
             }
             else
             {
