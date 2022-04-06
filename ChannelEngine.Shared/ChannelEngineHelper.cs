@@ -1,5 +1,6 @@
 ﻿using ChannelEngine.BusinessLogic.Interfaces;
 using ChannelEngine.BusinessLogic.Models;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RestSharp;
 using System;
@@ -20,6 +21,12 @@ namespace ChannelEngine.BusinessLogic
             _apiKey = apiKey;
         }
 
+        public ChannelEngineHelper(IOptions<AppSettings> appSettings)
+        {
+            _baseUrl = appSettings.Value.ChannelEngineBaseUrl;
+            _apiKey = appSettings.Value.ApiKey;
+        }
+
         public async Task<GetOrderResponseDto> GetOrders(string status)
         {
             var client = new RestClient(_baseUrl);
@@ -35,9 +42,29 @@ namespace ChannelEngine.BusinessLogic
             }
             else
             {
-                throw new Exception("Something went wrong while processing payment.");
+                throw new Exception("Something went wrong while getting orders.");
             }
-            throw new NotImplementedException();
+        }
+
+        public async Task<PatchProductResponseDto> PatchProduct(string merchantProductNumber, List<PatchProductDto> model)
+        {
+            var client = new RestClient(_baseUrl);
+            var request = new RestRequest($"products/{merchantProductNumber}?apikey={_apiKey}", Method.Patch);
+
+            request.AddJsonBody<List<PatchProductDto>>(model, "application/json-patch+json");
+
+            RestResponse response = await client.ExecuteAsync(request);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var result = JsonConvert.DeserializeObject<PatchProductResponseDto>(response.Content);
+
+                return result;
+            }
+            else
+            {
+                throw new Exception("Something went wrong while patching product.");
+            }
         }
     }
 }

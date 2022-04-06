@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ChannelEngine_Web
+namespace ChannelEngine_WebView
 {
     public class Startup
     {
@@ -43,7 +43,7 @@ namespace ChannelEngine_Web
             services.AddScoped<IChannelEngineHelper, ChannelEngineHelper>();
             services.AddScoped<IChannelEngineService, ChannelEngineService>();
 
-            services.AddRazorPages();
+            services.AddControllersWithViews();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -55,11 +55,10 @@ namespace ChannelEngine_Web
             }
             else
             {
-                app.UseExceptionHandler("/Error");
+                app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -69,7 +68,9 @@ namespace ChannelEngine_Web
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapRazorPages();
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

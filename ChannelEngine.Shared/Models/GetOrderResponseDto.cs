@@ -17,6 +17,7 @@ namespace ChannelEngine.BusinessLogic.Models
 
     public class GetOrderLinesDto
     {
+        public string MerchantProductNo { get; set; }
         public string Status { get; set; }
         public string Gtin { get; set; }
         public string Description { get; set; }

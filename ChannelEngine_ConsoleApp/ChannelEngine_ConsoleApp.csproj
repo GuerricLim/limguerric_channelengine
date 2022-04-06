@@ -5,4 +5,8 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ChannelEngine.Shared\ChannelEngine.BusinessLogic.csproj" />
+  </ItemGroup>
+
 </Project>
