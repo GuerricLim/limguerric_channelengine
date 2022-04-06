@@ -54,9 +54,16 @@ namespace ChannelEngine_ConsoleApp
 
                         if (int.TryParse(userInput, out i))
                         {
-                            var getProductToSetStock = getTopFiveProductsSold[i - 1];
+                            if (i < 1 || i > maximumOptions)
+                            {
+                                Console.WriteLine("Invalid input");
+                                userInput = Console.ReadLine();
+                            }
+                            else
+                            {
+                                var getProductToSetStock = getTopFiveProductsSold[i - 1];
 
-                            List<PatchProductDto> patches = new List<PatchProductDto>
+                                List<PatchProductDto> patches = new List<PatchProductDto>
                             {
                                 new PatchProductDto
                                 {
@@ -66,18 +73,20 @@ namespace ChannelEngine_ConsoleApp
                                 }
                             };
 
-                            var updateStockLevel = await _channelEngineHelper.PatchProduct(getProductToSetStock.MerchantProductNo, patches);
+                                var updateStockLevel = await _channelEngineHelper.PatchProduct(getProductToSetStock.MerchantProductNo, patches);
 
-                            if (updateStockLevel.Success)
-                            {
-                                Console.WriteLine("-----");
-                                Console.WriteLine($"Updated {getProductToSetStock.ProductName}'s Stock to {newStockLevel}");
-                                Console.WriteLine("-----");
+                                if (updateStockLevel.Success)
+                                {
+                                    Console.WriteLine("-----");
+                                    Console.WriteLine($"Updated {getProductToSetStock.ProductName}'s Stock to {newStockLevel}");
+                                    Console.WriteLine("-----");
+                                }
+
+                                Console.WriteLine("Select product to set stock level to 25 (Indicate the # of the product):");
+                                Console.WriteLine("To exit the app, type in EXIT");
+                                userInput = Console.ReadLine();
                             }
-
-                            Console.WriteLine("Select product to set stock level to 25 (Indicate the # of the product):");
-                            Console.WriteLine("To exit the app, type in EXIT");
-                            userInput = Console.ReadLine();
+                       
                         }
                         else
                         {
